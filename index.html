@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .note-container {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+            overflow: hidden; /* Hide overflow */
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .note-input {
+            width: 100%;
+            height: 100px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            resize: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: sticky; /* Keep input sticky */
+            top: 0; /* Fix to top */
+            z-index: 1; /* Keep it above the notes */
+        }
+
+        .note-input:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #5d9cec;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #4a8ae0;
+        }
+
+        .notes-list {
+            max-height: 300px; /* Limit height for scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            margin-top: 10px;
+        }
+
+        .note {
+            background-color: #ffe9a7;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative; /* For positioning buttons */
+            transition: transform 0.3s ease;
+        }
+
+        .note:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .edit-btn {
+            background-color: #f0ad4e;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background-color: #ec971f;
+        }
+
+        .delete-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #c9302c;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="note-container">
+    <h2>Note App</h2>
+    <textarea class="note-input" placeholder="Write your note here..."></textarea>
+    <button class="save-btn" onclick="saveNote()">Save Note</button>
+    
+    <div class="notes-list" id="notesList"></div>
+</div>
+
+<script>
+    let editIndex = null;
+
+    function saveNote() {
+        const noteInput = document.querySelector('.note-input');
+        const noteText = noteInput.value.trim();
+
+        if (noteText === "") {
+            alert('Please enter a note');
+            return;
+        }
+
+        if (editIndex !== null) {
+            const notes = document.querySelectorAll('.note');
+            notes[editIndex].querySelector('.note-text').innerText = noteText;
+            editIndex = null; // Reset edit index after editing
+        } else {
+            const note = document.createElement('div');
+            note.classList.add('note');
+            note.innerHTML = `<span class="note-text">${noteText}</span>
+                <div class="button-container">
+                    <button class="edit-btn" onclick="editNote(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteNote(this)">Delete</button>
+                </div>`;
+            document.getElementById('notesList').appendChild(note);
+        }
+        
+        noteInput.value = ""; // Clear the input field
+    }
+
+    function editNote(button) {
+        const note = button.parentElement.parentElement;
+        const noteText = note.querySelector('.note-text').innerText;
+        document.querySelector('.note-input').value = noteText;
+        editIndex = Array.from(document.querySelectorAll('.note')).indexOf(note);
+    }
+
+    function deleteNote(button) {
+        const note = button.parentElement.parentElement;
+        note.remove();
+    }
+</script>
+
+</body>
+</html>
